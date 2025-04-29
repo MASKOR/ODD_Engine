@@ -57,7 +57,7 @@ find_package(odd_engine)
 
 ## License
 
-[MIT](https://github.com/MASKOR/ODD_Engine/tree/main?tab=MIT-1-ov-file#)
+[MIT](https://github.com/MASKOR/ODD_Engine/blob/main/LICENSE)
 
 ## Author
 
