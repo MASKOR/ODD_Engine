@@ -1,0 +1,112 @@
+DNAMESPACE: http://fsw.adp/ontology#
+
+OBJECT:
+  egoVehicle: "http://fsw.adp/vehicle#Vehicle"
+  currentLocation: "http://fsw.adp/geo#Location"
+  currentWeather: "http://fsw.adp/weather#Condition"
+  currentSlope: "http://fsw.adp/geo#Slope"
+  currentRoad: "http://fsw.adp/geo#Road"
+  surroundingVehicles: "http://fsw.adp/geo#TrafficDensity"
+  loadingStatus: "http://fsw.adp/vehicle#LoadStatus"
+  
+VARIABLE:
+  slope_is_safe:
+    #TITLE: Check if slope is within safe parameters
+    bool: currentSlope.angle < 15.0
+    
+  visibility_sufficient:
+    #TITLE: Sufficient visibility conditions
+    bool: currentWeather.visibility > 50.0
+
+  visibility_insufficient:
+    #TITLE: Insufficient visibility conditions
+    bool: currentWeather.visibility < 30.0
+    
+  speed_limit:
+    #TITLE: Maximum speed (loaded/unloaded)
+    double: 40 - 15 * (loadingStatus.isLoaded)
+    
+  current_speed_safe:
+    #TITLE: Speed within safe range
+    bool: egoVehicle.speed < speed_limit
+    
+  haul_road_condition_good:
+    #TITLE: Condition of the haul road
+    bool: currentRoad.condition > 3 # Scale 1-5, where 5 is excellent
+    
+  in_operation_area:
+    #TITLE: Vehicle is within the valid operation area
+    bool: currentLocation.inGeofence
+  
+  weather_check_precipitation:
+    #TITLE: Precipitation amount
+    bool: currentWeather.precipitation < 30
+
+  weather_check_wind:
+    #TITLE: Wind speed
+    bool: currentWeather.windSpeed < 60
+
+  distance_to_barrier_check:
+    #TITLE: Distance to barrier
+    bool: currentLocation.distanceToBarrier > 5.0
+
+  hohe_fahrzeugdichte:
+    #TITLE: High vehicle density
+    bool: surroundingVehicles.density > 4 # High vehicle density
+
+  unexpected_obstacle:
+    #TITLE: Unexpected obstacle
+    bool: currentRoad.unexpectedObstacle
+RULE:
+
+  slope_check:
+    #TITLE: Slope check
+    WHEN AND:
+      slope_is_safe: true
+      
+  weather_check:
+    #TITLE: Weather conditions check
+    WHEN AND:
+      slope_check: true
+      visibility_sufficient: true
+      weather_check_precipitation: true
+      weather_check_wind: true
+      
+  speed_check:
+    #TITLE: Speed check
+    WHEN AND:
+      in_operation_area: true
+      
+  road_check:
+    #TITLE: Road conditions check
+    WHEN AND:
+      haul_road_condition_good: true
+      
+  area_check:
+    #TITLE: Operation area check
+    WHEN AND:
+      in_operation_area: true
+      distance_to_barrier_check: true
+
+RESTRICTION:
+
+  stop_immediately:
+    TARGET: MRM
+    #TITLE: Emergency stop under critical conditions
+    WHEN OR:
+      slope_check: false
+      area_check: false
+      
+  reduce_speed:
+    TARGET: SPEED_LIMIT_REACHED
+    #TITLE: Reduce speed under poor conditions
+    WHEN OR:
+      current_speed_safe: false
+      
+  human_supervision:
+    TARGET: TOR
+    #TITLE: Human supervision required
+    WHEN OR:
+      visibility_insufficient: true
+      hohe_fahrzeugdichte: true
+      unexpected_obstacle: true

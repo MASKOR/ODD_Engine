@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns="http://fsw.adp/ontology#"
+    xmlns:geo="http://fsw.adp/geo#"
+    xmlns:weather="http://fsw.adp/weather#"
+    xmlns:vehicle="http://fsw.adp/vehicle#">
+
+    <!-- Ontology Declaration -->
+    <owl:Ontology rdf:about="http://fsw.adp/ontology"/>
+
+    <!-- Classes -->
+    
+    <!-- Core Classes -->
+    <owl:Class rdf:about="http://fsw.adp/ontology#Entity"/>
+    
+    <!-- Geographic Classes -->
+    <owl:Class rdf:about="http://fsw.adp/geo#GeographicEntity">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/ontology#Entity"/>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://fsw.adp/geo#Location">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/geo#GeographicEntity"/>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://fsw.adp/geo#Road">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/geo#GeographicEntity"/>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://fsw.adp/geo#Slope">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/geo#GeographicEntity"/>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://fsw.adp/geo#TrafficDensity">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/geo#GeographicEntity"/>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://fsw.adp/geo#Barrier">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/geo#GeographicEntity"/>
+    </owl:Class>
+    
+    <!-- Weather Classes -->
+    <owl:Class rdf:about="http://fsw.adp/weather#WeatherEntity">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/ontology#Entity"/>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://fsw.adp/weather#Condition">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/weather#WeatherEntity"/>
+    </owl:Class>
+    
+    <!-- Vehicle Classes -->
+    <owl:Class rdf:about="http://fsw.adp/vehicle#VehicleEntity">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/ontology#Entity"/>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://fsw.adp/vehicle#Vehicle">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/vehicle#VehicleEntity"/>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://fsw.adp/vehicle#LoadStatus">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/vehicle#VehicleEntity"/>
+    </owl:Class>
+    
+    <!-- Sensorik -->
+    <owl:Class rdf:about="http://fsw.adp/vehicle#Sensor">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/vehicle#VehicleEntity"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://fsw.adp/vehicle#Camera">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/vehicle#Sensor"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://fsw.adp/vehicle#Lidar">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/vehicle#Sensor"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://fsw.adp/vehicle#Radar">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/vehicle#Sensor"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://fsw.adp/vehicle#V2X">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/vehicle#Sensor"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://fsw.adp/vehicle#WLAN">
+        <rdfs:subClassOf rdf:resource="http://fsw.adp/vehicle#Sensor"/>
+    </owl:Class>
+
+    <!-- Data Properties -->
+    
+    <!-- Geographic Properties -->
+    <owl:DatatypeProperty rdf:about="http://fsw.adp/geo#inGeofence">
+        <rdfs:domain rdf:resource="http://fsw.adp/geo#Location"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://fsw.adp/geo#distanceToBarrier">
+        <rdfs:domain rdf:resource="http://fsw.adp/geo#Location"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://fsw.adp/geo#angle">
+        <rdfs:domain rdf:resource="http://fsw.adp/geo#Slope"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://fsw.adp/geo#condition">
+        <rdfs:domain rdf:resource="http://fsw.adp/geo#Road"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+        <rdfs:comment>Road condition rating from 1 (poor) to 5 (excellent)</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://fsw.adp/geo#unexpectedObstacle">
+        <rdfs:domain rdf:resource="http://fsw.adp/geo#Road"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://fsw.adp/geo#density">
+        <rdfs:domain rdf:resource="http://fsw.adp/geo#TrafficDensity"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+        <rdfs:comment>Traffic density from 0 (no traffic) to 5 (congested)</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <!-- Weather Properties -->
+    <owl:DatatypeProperty rdf:about="http://fsw.adp/weather#visibility">
+        <rdfs:domain rdf:resource="http://fsw.adp/weather#Condition"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+        <rdfs:comment>Visibility in meters</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://fsw.adp/weather#precipitation">
+        <rdfs:domain rdf:resource="http://fsw.adp/weather#Condition"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+        <rdfs:comment>Precipitation in mm/h</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://fsw.adp/weather#windSpeed">
+        <rdfs:domain rdf:resource="http://fsw.adp/weather#Condition"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+        <rdfs:comment>Wind speed in km/h</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <!-- Vehicle Properties -->
+    <owl:DatatypeProperty rdf:about="http://fsw.adp/vehicle#speed">
+        <rdfs:domain rdf:resource="http://fsw.adp/vehicle#Vehicle"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+        <rdfs:comment>Vehicle speed in km/h</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://fsw.adp/vehicle#isLoaded">
+        <rdfs:domain rdf:resource="http://fsw.adp/vehicle#LoadStatus"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://fsw.adp/vehicle#loadWeight">
+        <rdfs:domain rdf:resource="http://fsw.adp/vehicle#LoadStatus"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+        <rdfs:comment>Load weight in tons</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <!-- Object Properties -->
+    
+    
+    <owl:ObjectProperty rdf:about="http://fsw.adp/vehicle#isLocatedAt">
+        <rdfs:domain rdf:resource="http://fsw.adp/vehicle#Vehicle"/>
+        <rdfs:range rdf:resource="http://fsw.adp/geo#Location"/>
+    </owl:ObjectProperty>
+    
+    <!-- Individuals -->
+    
+    <geo:Location rdf:about="http://fsw.adp/geo#location">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+        <rdfs:label>Current Location</rdfs:label>
+    </geo:Location>
+    
+    <weather:Condition rdf:about="http://fsw.adp/weather#condition">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+        <rdfs:label>Current Weather Condition</rdfs:label>
+    </weather:Condition>
+    
+    <geo:Slope rdf:about="http://fsw.adp/geo#slope">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+        <rdfs:label>Current Slope</rdfs:label>
+    </geo:Slope>
+    
+    <geo:Road rdf:about="http://fsw.adp/geo#road">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+        <rdfs:label>Current Road</rdfs:label>
+    </geo:Road>
+    
+    <geo:TrafficDensity rdf:about="http://fsw.adp/geo#trafficDensity">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+        <rdfs:label>Current Traffic Density</rdfs:label>
+    </geo:TrafficDensity>
+    
+    <vehicle:LoadStatus rdf:about="http://fsw.adp/vehicle#loadStatus">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+        <rdfs:label>Current Load Status</rdfs:label>
+    </vehicle:LoadStatus>
+    
+</rdf:RDF>
