@@ -94,6 +94,11 @@ public:
             }
         }
 
+        std::shared_ptr<std::string> get_id()
+        {
+            return objectName;
+        }
+
         std::shared_ptr<OntologyClass> get_value()
         {
             return valueReference;
@@ -236,6 +241,11 @@ public:
 
     std::shared_ptr<DomainObject>  get_domain_obj_shared_ptr (const std::string & key);
 
+    /*
+     * prints all variables
+     */
+    void print_all_keys();
+    std::vector<std::string> get_all_keys();
 
     std::vector<std::shared_ptr<bool>>                          boolVariable;
     std::vector<std::shared_ptr<int>>                           intVariable;
@@ -244,7 +254,6 @@ public:
     std::vector<std::shared_ptr<std::string>>                   stringVariable;
     std::vector<std::shared_ptr<DomainObject>> objects;
 
-private:
     /*
      *
      */
