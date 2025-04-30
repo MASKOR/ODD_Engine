@@ -94,7 +94,7 @@ bool ODDEngine::inference(std::vector<std::string>& targets){
         for (auto &guardrailPair: guardrailLevel) {
 
             bool g = check_guardrail(guardrailPair, targets);
-            if(!guardrailPair.second.isRestriction)
+            //if(!guardrailPair.second.isRestriction)
                 variableTable.set_data_property(guardrailPair.first, g);
         }
 
