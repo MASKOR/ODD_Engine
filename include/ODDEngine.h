@@ -72,14 +72,99 @@ public:
     /*
      * calls a Function of Database that prints all variables
      */
-    void print_all_keys();
-
-    void print_guardrail_map(bool hideDetail = false);
 
     std::string get_default_namespace()
     {
         return dnamespace;
     }
+
+    void print_guardrail_map(bool hideDetail = false);
+
+    // ODD Engine Structure Helper
+    void print_all_keys(){
+        std::cout << "All keys in Database:" << std::endl;
+
+        for (const auto& pair : variableTable.indexMap) {
+            if(is_key_in_restriction(pair.first))
+            {
+                std::cout << "Restriction: " << pair.first << std::endl;
+            }else if(is_key_in_guardrails(pair.first))
+            {
+                std::cout << "Guardrail: " << pair.first << std::endl;
+            }
+            else
+            {
+                std::cout << pair.first << std::endl;
+            }
+        }
+    }
+
+    Database& get_variable_table();
+
+    std::vector<std::string> get_all_keys();
+
+    std::vector<std::string> get_all_keys_without_guardrails();
+
+    std::vector<std::string> get_all_objects();
+
+    std::vector<std::string> get_all_guardrail_keys();
+
+    std::vector<std::string> get_all_restriction_keys();
+
+    std::vector<std::string> get_child_keys(const std::string& key);
+
+    std::string get_target_of_restriction(const std::string& key);
+
+    std::string get_expression_of_variable(const std::string& key);
+
+    Guardrail get_guardrail(const std::string& key)
+    {
+        for(const auto& heightLevel: guardrailMap)
+        {
+            try
+            {
+                return heightLevel.second.at(key);
+            }
+            catch (const std::out_of_range& e){}
+        }
+        throw std::out_of_range("Guardrail " + key + " not in List");
+    }
+     
+    bool is_key_in_restriction(const std::string& key)
+    {
+        for(const auto& heightLevel: guardrailMap)
+        {
+            auto it = heightLevel.second.find(key);
+            if (it != heightLevel.second.end() && it->second.isRestriction)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    bool is_key_variable(const std::string& key)
+    {
+        if(variableTable.find_variable_without_error(key).first != DataType::ERROR)
+        {
+            try
+            {
+                expressionContainer.get_expression(key);
+                return true;
+            }
+            catch(const std::out_of_range& e)
+            {
+                return false;
+            }
+            
+        }
+        else
+        {
+            return false;
+        }
+        
+    }
+
 
     /*
      * Sets the value of an onotologyClass Object

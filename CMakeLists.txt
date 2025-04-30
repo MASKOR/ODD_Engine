@@ -30,6 +30,7 @@ add_library(ODDEngine STATIC
 	src/Database.cpp 
 	src/Expression.cpp 
 	src/Guardrail.cpp
+	src/ODDEngineStructureHelper.cpp
 	
 	include/cparse/builtin-features.o
 	include/cparse/core-shunting-yard.o
