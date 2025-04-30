@@ -1,12 +1,6 @@
 //
-// Project: ODD Engine
-// Description: Header file for the Database class, which manages domain objects and their properties.
+// Created by mo on 06.08.24.
 //
-// This file is part of the ODD Engine and was developed in the Automated Driving Project 
-// of the Fahrzeugsoftwarelabor at MASCOR Institute of FH Aachen - University of Applied Sciences.
-//
-// Maintainer: Moritz Rumpf, Joschua Schulte-Tigges, Till Voss
-// 
 
 #ifndef ONTOLOGY_H
 #define ONTOLOGY_H
@@ -43,15 +37,15 @@ struct OntologyDataProperty
 {
     std::string id;
 
-    std::vector<std::shared_ptr<OntologyClass>> domains;
+    std::vector<std::shared_ptr<OntologyClass>> domains;//todo hier bitte weakptr vlt
     DataType::value range;
 };
 
 struct OntologyClass {
     std::string id;
 
-    std::vector<std::shared_ptr<OntologyClass>> topClasses;
-    std::vector<std::shared_ptr<OntologyClass>> subClasses;
+    std::vector<std::shared_ptr<OntologyClass>> topClasses; //todo weak vlt
+    std::vector<std::shared_ptr<OntologyClass>> subClasses; //todo bitte weak vlt
 
     std::vector<std::shared_ptr<OntologyDataProperty>> properties;
 };

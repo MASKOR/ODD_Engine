@@ -1,13 +1,3 @@
-//
-// Project: ODD Engine
-// Description: Header file for the Database class, which manages domain objects and their properties.
-//
-// This file is part of the ODD Engine and was developed in the Automated Driving Project 
-// of the Fahrzeugsoftwarelabor at MASCOR Institute of FH Aachen - University of Applied Sciences.
-//
-// Maintainer: Moritz Rumpf, Joschua Schulte-Tigges, Till Voss
-// 
-
 #include "../include/ODDEngine.h"
 
 ODDEngine::ODDEngine() {}
@@ -100,10 +90,11 @@ int ODDEngine::parse_guardrail_or_restriction(const std::string& key1guardrailNa
 
                 // check if illegal keyword  is used
                 if( std::find(KEYWORD_LIST.begin(), KEYWORD_LIST.end(),key3conditionName.Scalar()) != KEYWORD_LIST.end() ){
-                    throw std::out_of_range(key3conditionName.Scalar() + " is not allowed here");
+                    throw std::out_of_range(key3conditionName.Scalar() + " is not allowed here"); //todo error überarbeiten
                 }
 
                 // check if operand is part of Variables
+                //todo error werfen wenn nicht in Ontology
                 auto pair = this->variableTable.find_variable(key3conditionName.Scalar());
 
                 std::vector<std::string> list;
@@ -127,8 +118,6 @@ int ODDEngine::parse_guardrail_or_restriction(const std::string& key1guardrailNa
                 else {
                     throw std::out_of_range("Datatype " + std::to_string(pair.first) + " not supported");
                 }
-
-                // Set Guardrail height
                 try{
                     int dependencyGuardrailHeight = get_guardrail_height(key3conditionName.Scalar());
                     if(dependencyGuardrailHeight > height){
@@ -136,11 +125,12 @@ int ODDEngine::parse_guardrail_or_restriction(const std::string& key1guardrailNa
                     }
                 }
                 catch (const std::out_of_range& e){}
+                
             }
             newGuardrail.logicBlocks.emplace_back(logicBlock);
         }
         else {
-            throw std::out_of_range("[ERROR] undeclared identifier: " + key2statementInGuardrail.Scalar() + "\nDid you forget Constraint (WHEN AND, WHEN OR, EXCEPT WHEN EITHER) ?");
+            throw std::out_of_range("[ERROR] undeclared identifier: " + key2statementInGuardrail.Scalar() + "\nDid you forget Constraint (WHEN AND, WHEN OR, EXCEPT WHEN EITHER) ?"); //todo passenden error werfen
         }
     }
     std::cout << "" << std::endl;
@@ -167,12 +157,12 @@ void ODDEngine::parse_odd(const std::string& filename){
             if (keywordPair->first.Scalar() == "import") {
                 if (!importStillAllowed) {
                     std::cout << "[ERROR] import is not allowed here" << std::endl;
-                    throw std::out_of_range("import is not allowed here");
+                    throw std::out_of_range("huhu"); //todo passenden error finden
                 }
 
                 if (!keywordPair->second.IsSequence()){
                     std::cout << "[ERROR] import value is no Sequence" << std::endl;
-                    throw std::out_of_range("import value is no Sequence");
+                    throw std::out_of_range("huhu"); //todo passenden error finden
                 }
 
 
@@ -184,7 +174,7 @@ void ODDEngine::parse_odd(const std::string& filename){
 
                     // check for supported file types
                     if (importType != ".yaml"){
-                        throw std::out_of_range(importType + " is not supported");
+                        throw std::out_of_range(importType + " is not supported"); //todo throw custom error
                     }
 
                     // check if filename is just a file in same folder or a relative or absolute path
@@ -211,8 +201,9 @@ void ODDEngine::parse_odd(const std::string& filename){
                 }
                 else if (namespaceString.find('#') == std::string::npos)
                 {
-                    throw std::out_of_range("Namespace wrong / # missing");
+                    throw std::out_of_range("Namespace wrong / # missing"); //todo better error
                 }
+                //todo sollte man abfangen wenn mehrere Hashtags drin sind ???
 
 
                 dnamespace=namespaceString;
@@ -293,7 +284,7 @@ void ODDEngine::parse_odd(const std::string& filename){
         }
     }
     else{
-        std::cout << "YAML - Node is no map" << std::endl;
+        std::cout << "YAML - Node is no map" << std::endl; //todo throw error
     }
     std::cout << "-------------------" << std::endl;
 }

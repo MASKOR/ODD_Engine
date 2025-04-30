@@ -1,12 +1,6 @@
 //
-// Project: ODD Engine
-// Description: Header file for the Database class, which manages domain objects and their properties.
+// Created by moritz on 14/06/24.
 //
-// This file is part of the ODD Engine and was developed in the Automated Driving Project 
-// of the Fahrzeugsoftwarelabor at MASCOR Institute of FH Aachen - University of Applied Sciences.
-//
-// Maintainer: Moritz Rumpf, Joschua Schulte-Tigges, Till Voss
-// 
 
 #ifndef ODD_ENGINE_GUARDRAIL_TYPES_H
 #define ODD_ENGINE_GUARDRAIL_TYPES_H

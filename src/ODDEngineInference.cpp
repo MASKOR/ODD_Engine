@@ -1,12 +1,6 @@
 //
-// Project: ODD Engine
-// Description: Header file for the Database class, which manages domain objects and their properties.
+// Created by moritz on 18/06/24.
 //
-// This file is part of the ODD Engine and was developed in the Automated Driving Project 
-// of the Fahrzeugsoftwarelabor at MASCOR Institute of FH Aachen - University of Applied Sciences.
-//
-// Maintainer: Moritz Rumpf, Joschua Schulte-Tigges, Till Voss
-// 
 
 #include "../include/ODDEngine.h"
 #include <cassert>
@@ -94,7 +88,7 @@ bool ODDEngine::inference(std::vector<std::string>& targets){
         for (auto &guardrailPair: guardrailLevel) {
 
             bool g = check_guardrail(guardrailPair, targets);
-            if(!guardrailPair.second.isRestriction)
+            //if(!guardrailPair.second.isRestriction)
                 variableTable.set_data_property(guardrailPair.first, g);
         }
 

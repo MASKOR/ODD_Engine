@@ -1,12 +1,6 @@
 //
-// Project: ODD Engine
-// Description: Header file for the Database class, which manages domain objects and their properties.
+// Created by mo on 14.09.24.
 //
-// This file is part of the ODD Engine and was developed in the Automated Driving Project 
-// of the Fahrzeugsoftwarelabor at MASCOR Institute of FH Aachen - University of Applied Sciences.
-//
-// Maintainer: Moritz Rumpf, Joschua Schulte-Tigges, Till Voss
-// 
 
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
@@ -29,6 +23,7 @@ private:
 
 const std::vector<std::string> parenthesis{"(",")"};
 
+//todo Func wahrscheinlich löschen, da erstetzt durch vektor von einstelligen Operationen
 enum ExpressionOperationType {No_op, Func, And, Or, Equal, Nequal, Less, Great, LessEqual, GreatEqual, Add, Sub, Mul, Div, Pow};
 
 const std::unordered_map<std::string, std::pair<int, ExpressionOperationType>> operatorMap{
@@ -44,6 +39,7 @@ class Expression
 public:
     explicit Expression(const std::string& expression, const std::string& resultName, const std::shared_ptr<bool>& ptr)
     {
+        this->expressionString = expression;
         this->calc = cparse::calculator(expression.c_str());
         this->resultName=resultName;
         this->dataType = DataType::BOOL;
@@ -52,6 +48,7 @@ public:
 
     explicit Expression(const std::string& expression, const std::string& resultName, const std::shared_ptr<int>& ptr)
     {
+        this->expressionString = expression;
         this->calc = cparse::calculator(expression.c_str());
         this->resultName=resultName;
         this->dataType = DataType::INT;
@@ -60,6 +57,7 @@ public:
 
     explicit Expression(const std::string& expression, const std::string& resultName, const std::shared_ptr<float>& ptr)
     {
+        this->expressionString = expression;
         this->calc = cparse::calculator(expression.c_str());
         this->resultName=resultName;
         this->dataType = DataType::FLOAT;
@@ -68,6 +66,7 @@ public:
 
     explicit Expression(const std::string& expression, const std::string& resultName, const std::shared_ptr<double>& ptr)
     {
+        this->expressionString = expression;
         this->calc = cparse::calculator(expression.c_str());
         this->resultName=resultName;
         this->dataType = DataType::DOUBLE;
@@ -79,6 +78,8 @@ public:
      */
     void calculate(const cparse::TokenMap& tm) const;
 
+    const std::string& get_expression_string() const { return expressionString; }
+    const std::string& get_result_name() const { return resultName; }
 private:
     std::string resultName;
     DataType::value dataType;
@@ -87,6 +88,7 @@ private:
     std::weak_ptr<float> floatResultPointer;
     std::weak_ptr<double> doubleResultPointer;
     cparse::calculator calc;
+    std::string expressionString;
 };
 
 /*
@@ -115,11 +117,28 @@ public:
     static stringType::value get_string_type(const std::string& s);
 
     /*
-    * Method splits a string into a std::vector of tokens.
-    * Operators are taken from the operatorMap.
+    * Methode splittet String in std::vector von Token
+    * Operatoren werden aus der Map OperatorPrio genommen
+    * todo Da Probleme entstehen können bei Operator != und ! wenn ! vor gesucht wird
+    * todo Aus 1 != 0 kann fälschlicherweise 1 ! =0 werden wenn !
+    * todo aktuell wird daher dieser Fall einfach umgangen, da ! nicht genutzt wird, sollten dies allerdings nicht mehr der
+    * todo Fall sein oder neue Operatoren implementiert werden benötigt diese Methdoe einen Overhaul
     */
-   
     static std::vector<Token> split_string_in_token_list(std::string string);
+    
+    Expression get_expression(const std::string& resultName) const
+    {
+        for (const Expression& expression : expressionList)
+        {
+            if (expression.get_result_name() == resultName)
+            {
+                return expression;
+            }
+        }
+        throw std::out_of_range("Expression with name " + resultName + " not found");
+    }
+
+    std::vector<std::string> get_dependencies_for_key(const std::string& key);
 
 
 

@@ -1,13 +1,6 @@
 //
-// Project: ODD Engine
-// Description: Header file for the Database class, which manages domain objects and their properties.
+// Created by mo on 12.09.24.
 //
-// This file is part of the ODD Engine and was developed in the Automated Driving Project 
-// of the Fahrzeugsoftwarelabor at MASCOR Institute of FH Aachen - University of Applied Sciences.
-//
-// Maintainer: Moritz Rumpf, Joschua Schulte-Tigges, Till Voss
-// 
-
 #include "../include/Database.h"
 
 
@@ -18,7 +11,7 @@ void Database::init_object(const std::string & objectName, const std::string& do
 {
     if(this->find_variable_without_error(objectName).first != DataType::ERROR)
     {
-        throw std::out_of_range("Variable " + objectName + " already initialized");
+        throw std::out_of_range("Variable " + objectName + " already initialized"); //todo better error
     }
     if(!ontology.find_class(domainClassType))
     {
@@ -35,6 +28,7 @@ void Database::init_object(const std::string & objectName, const std::string& do
         domain_object_data_property.dataType= dataProperty->range;
         domain_object_data_property.ontologyReference = dataProperty;
 
+        //todo diese Convertion muss auf Dauer gehen!!
         DataType::value type;
         if (dataProperty->range==DataType::BOOL)
         {
@@ -64,7 +58,7 @@ void Database::init_object(const std::string & objectName, const std::string& do
         std::string id = dataProperty->id;
         size_t pos = id.find('#');
 
-        // If the character is found, delete everything before and including '#'
+        // Wenn das Zeichen gefunden wurde, lösche alles davor und inklusive '#'
         if (pos != std::string::npos) {
             id.erase(0, pos + 1);
         }
@@ -83,7 +77,7 @@ void Database::init_variable(const std::string& key, DataType::value dataType)
 {
     if(this->find_variable_without_error(key).first != DataType::ERROR)
     {
-        throw std::out_of_range("Guardrail " + key + " already initialized");
+        throw std::out_of_range("Guardrail " + key + " already initialized"); //todo better error
     }
 
     if(dataType == DataType::INT)
@@ -198,4 +192,22 @@ std::pair<DataType::value, int> Database::find_variable_without_error(const std:
     {
         return {DataType::ERROR,-1};
     }
+}
+
+/*
+ * function that prints all variables
+ */
+void Database::print_all_keys(){
+    std::cout << "All keys in Database:" << std::endl;
+    for (const auto& pair : indexMap) {
+        std::cout << pair.first << std::endl;
+    }
+}
+
+std::vector<std::string> Database::get_all_keys(){
+    std::vector<std::string> keys;
+    for (const auto& pair : indexMap) {
+        keys.push_back(pair.first);
+    }
+    return keys;
 }

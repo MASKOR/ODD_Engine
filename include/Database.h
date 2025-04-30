@@ -1,12 +1,6 @@
 //
-// Project: ODD Engine
-// Description: Header file for the Database class, which manages domain objects and their properties.
+// Created by mo on 12.09.24.
 //
-// This file is part of the ODD Engine and was developed in the Automated Driving Project 
-// of the Fahrzeugsoftwarelabor at MASCOR Institute of FH Aachen - University of Applied Sciences.
-//
-// Maintainer: Moritz Rumpf, Joschua Schulte-Tigges, Till Voss
-// 
 
 #ifndef DATABASE_H
 #define DATABASE_H
@@ -41,7 +35,7 @@ public:
             {
                 return lockedPointer->id;
             }
-            throw std::out_of_range("weak_ptr oudated");
+            throw std::out_of_range("weak_ptr oudatet");
         }
 
         DataType::value dataType;
@@ -59,7 +53,7 @@ public:
             this->classReference = ontology.get_class_ptr(classKey);
             if(!classReference)
             {
-                throw std::out_of_range("No class exisits with this ID: " + classKey);
+                throw std::out_of_range("No class exisits with this ID: " + classKey); //todo better error
             }
 
             // set Value
@@ -81,7 +75,7 @@ public:
                 this->valueReference = ontology.get_class_ptr(valueKey);
                 if(!ontology.find_class(valueKey))
                 {
-                    throw std::out_of_range(valueKey + " not found");
+                    throw std::out_of_range(valueKey + " not found"); //todo besser error
                 }
                 for (const auto& topClass: this->valueReference->topClasses)
                 {
@@ -90,8 +84,13 @@ public:
                         return;
                     }
                 }
-                throw std::out_of_range(valueKey + " is not a Subclass of " + classKey);
+                throw std::out_of_range(valueKey + " is not a Subclass of " + classKey); //todo better error
             }
+        }
+
+        std::shared_ptr<std::string> get_id()
+        {
+            return objectName;
         }
 
         std::shared_ptr<OntologyClass> get_value()
@@ -231,11 +230,17 @@ public:
 
     /*
      * returns the value of a Object or a BoolVariable as String
+     * todo sollte überdacht werden
      */
     std::string get_object_value(const std::string& key);
 
     std::shared_ptr<DomainObject>  get_domain_obj_shared_ptr (const std::string & key);
 
+    /*
+     * prints all variables
+     */
+    void print_all_keys();
+    std::vector<std::string> get_all_keys();
 
     std::vector<std::shared_ptr<bool>>                          boolVariable;
     std::vector<std::shared_ptr<int>>                           intVariable;
@@ -244,7 +249,6 @@ public:
     std::vector<std::shared_ptr<std::string>>                   stringVariable;
     std::vector<std::shared_ptr<DomainObject>> objects;
 
-private:
     /*
      *
      */

@@ -1,12 +1,6 @@
 //
-// Project: ODD Engine
-// Description: Header file for the Database class, which manages domain objects and their properties.
+// Created by mo on 14.09.24.
 //
-// This file is part of the ODD Engine and was developed in the Automated Driving Project 
-// of the Fahrzeugsoftwarelabor at MASCOR Institute of FH Aachen - University of Applied Sciences.
-//
-// Maintainer: Moritz Rumpf, Joschua Schulte-Tigges, Till Voss
-// 
 
 #include "../include/Expression.h"
 
@@ -44,9 +38,9 @@ void Expression::calculate(const cparse::TokenMap& tm) const
             *lockedPointer=calc.eval(tm).asDouble();
         }
     }
-    else //Should never happen
+    else //Kann eigentlich nicht auftreten
     {
-        throw std::out_of_range("Expression::calculate impossible Error");
+        throw std::out_of_range("Expression::calculate riesenfehler");
     }
 }
 
@@ -282,4 +276,31 @@ std::vector<Token> ExpressionContainer::split_string_in_token_list(std::string s
         token.type = get_string_type(token.token);
     }
     return tokenList;
+}
+
+std::vector<std::string> ExpressionContainer::get_dependencies_for_key(const std::string& key) {
+    std::vector<std::string> dependencies;
+    try
+    {
+        Expression expression = get_expression(key);
+        std::string expr = expression.get_expression_string();
+        std::vector<Token> tokens = split_string_in_token_list(expr);
+        
+        bool dependsOnKey = false;
+        for (const Token& token : tokens) {
+            if (token.type == stringType::Var) {
+                dependencies.push_back(token.token);
+            }
+        }
+
+        return dependencies;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        return dependencies;
+    }
+    
+
+    
 }

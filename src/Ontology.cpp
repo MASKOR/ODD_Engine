@@ -1,13 +1,3 @@
-//
-// Project: ODD Engine
-// Description: Header file for the Database class, which manages domain objects and their properties.
-//
-// This file is part of the ODD Engine and was developed in the Automated Driving Project 
-// of the Fahrzeugsoftwarelabor at MASCOR Institute of FH Aachen - University of Applied Sciences.
-//
-// Maintainer: Moritz Rumpf, Joschua Schulte-Tigges, Till Voss
-// 
-
 #include "../include/Ontology.h"
 #include <iostream>
 #include <redland.h>
@@ -105,7 +95,7 @@ bool Ontology::add_domain_to_data_property(const std::string& dataPropertyKey, c
         std::cout << domainKey << " not found" << std::endl;
         return false;
     }
-    
+    // AUSLAGERN IN FUNKTIONEN VON DATA PROPERTIES UND DOMAINS
     for (const auto& domain: dataProperties[dataPropertyKey]->domains)
     {
         if (domain->id == domainKey)
@@ -114,7 +104,7 @@ bool Ontology::add_domain_to_data_property(const std::string& dataPropertyKey, c
             return false;
         }
     }
-    std::shared_ptr<OntologyClass> classPtr = this->get_class_ptr(domainKey);
+    std::shared_ptr<OntologyClass> classPtr = this->get_class_ptr(domainKey); //todo maybe weakptr
     dataProperties[dataPropertyKey]->domains.emplace_back(classPtr);
     classPtr->properties.emplace_back(dataProperties[dataPropertyKey]);
     return true;
@@ -155,11 +145,11 @@ std::vector<std::shared_ptr<OntologyDataProperty>> Ontology::get_properties_of_c
 
         for(const auto& dataProperty: tmpClass->properties)
         {
-            resultDataProperties.emplace_back(dataProperty);
+            resultDataProperties.emplace_back(dataProperty); //todo Duplikate abfangen
         }
         for(const auto& topClass: tmpClass->topClasses)
         {
-            classPtrQueue.emplace_back(topClass);
+            classPtrQueue.emplace_back(topClass);//todo Duplikate abfangen
         }
     }
     return resultDataProperties;
@@ -301,7 +291,7 @@ Ontology create_ontology(const std::unordered_map<std::string, std::vector<Tripe
                         }
                         else
                         {
-                            throw std::out_of_range("not supported datatype");
+                            throw std::out_of_range("not supported datatype"); //todo better error
                         }
                         newOntology.set_range_of_data_property(triple.subject, dataType);
                     }
