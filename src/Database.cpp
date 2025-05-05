@@ -31,7 +31,7 @@ void Database::init_object(const std::string & objectName, const std::string& do
     for(const auto& dataProperty: ontology.get_properties_of_class(domainClassType))
     {
         DomainObjectDataProperty domain_object_data_property;
-
+        
         domain_object_data_property.dataType= dataProperty->range;
         domain_object_data_property.ontologyReference = dataProperty;
 
@@ -75,6 +75,131 @@ void Database::init_object(const std::string & objectName, const std::string& do
         objects[objects.size()-1]->dataProperies.emplace_back(std::make_shared<DomainObjectDataProperty>(domain_object_data_property));
     }
 }
+
+void Database::update_object(const std::string & objectName, const std::string& domainClassType,  Ontology& ontology){
+    std::vector<std::string> ids_in_objects;
+    for(const auto& dataProperty: ontology.get_properties_of_class(domainClassType))
+    {
+        DomainObjectDataProperty domain_object_data_property;
+
+        domain_object_data_property.dataType= dataProperty->range;
+        domain_object_data_property.ontologyReference = dataProperty;
+
+        DataType::value type;
+        if (dataProperty->range==DataType::BOOL)
+        {
+            type=DataType::BOOL;
+        }
+        else if (dataProperty->range==DataType::INT)
+        {
+            type=DataType::INT;
+        }
+        else if (dataProperty->range==DataType::FLOAT)
+        {
+            type=DataType::FLOAT;
+        }
+        else if (dataProperty->range==DataType::DOUBLE)
+        {
+            type=DataType::DOUBLE;
+        }
+        else if (dataProperty->range==DataType::STRING)
+        {
+            type=DataType::STRING;
+        }
+        else
+        {
+            throw std::out_of_range("Type " + std::to_string(dataProperty->range) + " is not supported");
+        }
+
+        std::string id = dataProperty->id;
+        size_t pos = id.find('#');
+
+        // If the character is found, delete everything before and including '#'
+        if (pos != std::string::npos) {
+            id.erase(0, pos + 1);
+        }
+
+        std::string key = objectName+id;
+
+        try
+        {
+            this->init_variable(key, type);
+            
+            objects[indexMap[objectName].second]->dataProperies.emplace_back(std::make_shared<DomainObjectDataProperty>(domain_object_data_property));
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        ids_in_objects.emplace_back(id);
+        
+    }
+
+    for(std::shared_ptr<Database::DomainObjectDataProperty> dataProperty: objects[indexMap[objectName].second]->dataProperies)
+    {
+        bool is_in_objects = false;
+        std::string dataPropId = dataProperty->get_id();
+        size_t pos = dataPropId.find('#');
+        // If the character is found, delete everything before and including '#'
+        if (pos != std::string::npos) {
+            dataPropId.erase(0, pos + 1);
+        }
+
+        for(auto& id: ids_in_objects)
+        {
+            if(dataPropId == id)
+            {
+                is_in_objects = true;
+            }
+        }
+
+        if(!is_in_objects)
+        {
+            std::string key_to_remove = objectName + dataPropId;
+            remove_variable(key_to_remove);
+            std::cout << "Key " << key_to_remove << " removed" << std::endl;
+        }
+        
+    }
+}
+
+bool Database::remove_variable(const std::string& key)
+{
+    auto pair = find_variable_without_error(key);
+    if(pair.first == DataType::ERROR)
+    {
+        return false;
+    }
+    indexMap.erase(key);
+    if(pair.first == DataType::OBJECT)
+    {
+        objects.erase(objects.begin() + pair.second);
+    }
+    else if(pair.first == DataType::BOOL)
+    {
+        boolVariable.erase(boolVariable.begin() + pair.second);
+    }
+    else if(pair.first == DataType::INT)
+    {
+        intVariable.erase(intVariable.begin() + pair.second);
+    }
+    else if(pair.first == DataType::FLOAT)
+    {
+        floatVariable.erase(floatVariable.begin() + pair.second);
+    }
+    else if(pair.first == DataType::DOUBLE)
+    {
+        doubleVariable.erase(doubleVariable.begin() + pair.second);
+    }
+    else if(pair.first == DataType::STRING)
+    {
+        stringVariable.erase(stringVariable.begin() + pair.second);
+    }
+    
+    return true;
+}
+
+
 
 /*
  * function initializing a variable that stores Values beside Domain specific classes
@@ -156,6 +281,7 @@ void Database::set_object_value(const std::string & key, const std::string& valu
         throw std::out_of_range("Variable " + key + " not initialized");;
     }
     objectPtr->set_value(key, value, ontology);
+    this->update_object(key, value, ontology);
 }
 
 std::shared_ptr<Database::DomainObject>  Database::get_domain_obj_shared_ptr (const std::string & key){
