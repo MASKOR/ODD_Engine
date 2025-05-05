@@ -63,7 +63,7 @@ bool ODDEngine::check_logic_block(const LogicBlock& logicBlock) {
         logicBlock.operationType == LogicBlockType::EXCEPT_WHEN_EITHER) {
         return true;
         }
-    throw std::out_of_range("check_logic_block massive error");
+    throw std::logic_error("check_logic_block massive error");
 }
 
 

@@ -56,7 +56,7 @@ void ODDEngine::parse_variable(const std::string& key1guardrailName,
     }
     else
     {
-        throw std::out_of_range("Type " + value1guardrailNode.begin()->first.Scalar() + " not supported");
+        throw std::invalid_argument("Type " + value1guardrailNode.begin()->first.Scalar() + " not supported");
     }
 
     expressionContainer.add_expression(value1guardrailNode.begin()->second.Scalar(), key1guardrailName, variableTable, dataType);
@@ -67,7 +67,7 @@ int ODDEngine::parse_guardrail_or_restriction(const std::string& key1guardrailNa
 
     int height = get_guardrail_height(key1guardrailName);
     if (height != -1){
-        throw std::out_of_range(" already exists");
+        throw std::invalid_argument(" already exists");
     }
 
     Guardrail newGuardrail;
@@ -100,7 +100,7 @@ int ODDEngine::parse_guardrail_or_restriction(const std::string& key1guardrailNa
 
                 // check if illegal keyword  is used
                 if( std::find(KEYWORD_LIST.begin(), KEYWORD_LIST.end(),key3conditionName.Scalar()) != KEYWORD_LIST.end() ){
-                    throw std::out_of_range(key3conditionName.Scalar() + " is not allowed here");
+                    throw std::invalid_argument(key3conditionName.Scalar() + " is not allowed here");
                 }
 
                 // check if operand is part of Variables
@@ -125,7 +125,7 @@ int ODDEngine::parse_guardrail_or_restriction(const std::string& key1guardrailNa
                                     this->variableTable.get_domain_obj_shared_ptr(key3conditionName.Scalar()));
                 }
                 else {
-                    throw std::out_of_range("Datatype " + std::to_string(pair.first) + " not supported");
+                    throw std::invalid_argument("Datatype " + std::to_string(pair.first) + " not supported");
                 }
 
                 // Set Guardrail height
@@ -140,7 +140,7 @@ int ODDEngine::parse_guardrail_or_restriction(const std::string& key1guardrailNa
             newGuardrail.logicBlocks.emplace_back(logicBlock);
         }
         else {
-            throw std::out_of_range("[ERROR] undeclared identifier: " + key2statementInGuardrail.Scalar() + "\nDid you forget Constraint (WHEN AND, WHEN OR, EXCEPT WHEN EITHER) ?");
+            throw std::invalid_argument("[ERROR] undeclared identifier: " + key2statementInGuardrail.Scalar() + "\nDid you forget Constraint (WHEN AND, WHEN OR, EXCEPT WHEN EITHER) ?");
         }
     }
     std::cout << "" << std::endl;
@@ -167,12 +167,12 @@ void ODDEngine::parse_odd(const std::string& filename){
             if (keywordPair->first.Scalar() == "import") {
                 if (!importStillAllowed) {
                     std::cout << "[ERROR] import is not allowed here" << std::endl;
-                    throw std::out_of_range("import is not allowed here");
+                    throw std::invalid_argument("import is not allowed here");
                 }
 
                 if (!keywordPair->second.IsSequence()){
                     std::cout << "[ERROR] import value is no Sequence" << std::endl;
-                    throw std::out_of_range("import value is no Sequence");
+                    throw std::invalid_argument("import value is no Sequence");
                 }
 
 
@@ -184,7 +184,7 @@ void ODDEngine::parse_odd(const std::string& filename){
 
                     // check for supported file types
                     if (importType != ".yaml"){
-                        throw std::out_of_range(importType + " is not supported");
+                        throw std::invalid_argument(importType + " is not supported");
                     }
 
                     // check if filename is just a file in same folder or a relative or absolute path
@@ -211,7 +211,7 @@ void ODDEngine::parse_odd(const std::string& filename){
                 }
                 else if (namespaceString.find('#') == std::string::npos)
                 {
-                    throw std::out_of_range("Namespace wrong / # missing");
+                    throw std::invalid_argument("Namespace wrong / # missing");
                 }
 
 
@@ -229,7 +229,7 @@ void ODDEngine::parse_odd(const std::string& filename){
                     std::cout << it->first << "  " << it->second.Scalar() << std::endl;
                     if (it->second.Scalar().empty())
                     {
-                        throw std::out_of_range("Variable " + it->first.Scalar() + " doesn't have a domain type");
+                        throw std::domain_error("Variable " + it->first.Scalar() + " doesn't have a domain type");
                     }
                     if(it->second.Scalar().find('#')==std::string::npos)
                     {
