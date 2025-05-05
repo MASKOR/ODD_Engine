@@ -78,15 +78,17 @@ public:
             }
             else
             {
-                this->valueReference = ontology.get_class_ptr(valueKey);
                 if(!ontology.find_class(valueKey))
                 {
-                    throw std::out_of_range(valueKey + " not found");
+                    throw std::out_of_range(valueKey + " not found test");
+                    return;
                 }
-                for (const auto& topClass: this->valueReference->topClasses)
+                std::shared_ptr<OntologyClass> valueClass = ontology.get_class_ptr(valueKey);
+                for (const auto& topClass: valueClass->topClasses)
                 {
                     if(topClass->id == this->classReference->id)
                     {
+                        this->valueReference = ontology.get_class_ptr(valueKey);
                         return;
                     }
                 }
