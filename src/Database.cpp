@@ -18,11 +18,11 @@ void Database::init_object(const std::string & objectName, const std::string& do
 {
     if(this->find_variable_without_error(objectName).first != DataType::ERROR)
     {
-        throw std::out_of_range("Variable " + objectName + " already initialized");
+        throw std::invalid_argument("Variable " + objectName + " already initialized");
     }
     if(!ontology.find_class(domainClassType))
     {
-        throw std::out_of_range("Class " + domainClassType + " not in Ontology!");
+        throw std::invalid_argument("Class " + domainClassType + " not in Ontology!");
     }
 
     indexMap[objectName] = {DataType::OBJECT, objects.size()};
@@ -58,7 +58,7 @@ void Database::init_object(const std::string & objectName, const std::string& do
         }
         else
         {
-            throw std::out_of_range("Type " + std::to_string(dataProperty->range) + " is not supported");
+            throw std::invalid_argument("Type " + std::to_string(dataProperty->range) + " is not supported");
         }
 
         std::string id = dataProperty->id;
@@ -83,7 +83,7 @@ void Database::init_variable(const std::string& key, DataType::value dataType)
 {
     if(this->find_variable_without_error(key).first != DataType::ERROR)
     {
-        throw std::out_of_range("Guardrail " + key + " already initialized");
+        throw std::invalid_argument("Guardrail " + key + " already initialized");
     }
 
     if(dataType == DataType::INT)
@@ -142,14 +142,14 @@ std::string Database::get_object_value(const std::string& key)
             return lockedPtr->get_value()->id;
         }
     }
-    throw std::out_of_range(key + " is not an Object");
+    throw std::invalid_argument(key + " is not an Object");
 }
 
 void Database::set_object_value(const std::string & key, const std::string& value,  Ontology& ontology){
     auto pair = find_variable(key);
     if(pair.first != DataType::OBJECT)
     {
-        throw std::out_of_range("Identifier " + key + " is not an Object");
+        throw std::invalid_argument("Identifier " + key + " is not an Object");
     }
     std::shared_ptr<DomainObject> objectPtr = objects[pair.second];
     if(!objectPtr){
@@ -170,7 +170,7 @@ std::shared_ptr<Database::DomainObject>  Database::get_domain_obj_shared_ptr (co
     }
     if (pair.first!=DataType::OBJECT)
     {
-        throw std::out_of_range("[get_domain_obj_shared_ptr] Identifier " + key + " is not an Object");
+        throw std::domain_error("[get_domain_obj_shared_ptr] Identifier " + key + " is not an Object");
     }
 
     return objects.at(pair.second);

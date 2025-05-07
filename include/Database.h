@@ -32,7 +32,7 @@ public:
             {
                 return lockedPointer->range;
             }
-            throw std::out_of_range("get_type(): ontologyReference couldn't be locked");
+            throw std::bad_weak_ptr();
         }
 
         std::string get_id()
@@ -41,7 +41,7 @@ public:
             {
                 return lockedPointer->id;
             }
-            throw std::out_of_range("weak_ptr oudated");
+            throw std::bad_weak_ptr();
         }
 
         DataType::value dataType;
@@ -90,7 +90,7 @@ public:
                         return;
                     }
                 }
-                throw std::out_of_range(valueKey + " is not a Subclass of " + classKey);
+                throw std::domain_error(valueKey + " is not a Subclass of " + classKey);
             }
         }
 
@@ -172,7 +172,7 @@ public:
         }
         else
         {
-            throw std::out_of_range("Datatype of " + key + " is not supported!");
+            throw std::invalid_argument("Datatype of " + key + " is not supported!");
 
         }
     }
@@ -183,7 +183,7 @@ public:
 
         if (pair.first != DataType::BOOL)
         {
-            throw std::out_of_range("Identifier " + key + " is not a Boolean!");
+            throw std::invalid_argument("Identifier " + key + " is not a Boolean!");
         }
 
         return boolVariable.at(pair.second);
@@ -195,7 +195,7 @@ public:
 
         if (pair.first != DataType::INT)
         {
-            throw std::out_of_range("Identifier " + key + " is not a Integer!");
+            throw std::invalid_argument("Identifier " + key + " is not a Integer!");
         }
 
         return intVariable.at(pair.second);
@@ -207,7 +207,7 @@ public:
 
         if (pair.first != DataType::FLOAT)
         {
-            throw std::out_of_range("Identifier " + key + " is not a Float!");
+            throw std::invalid_argument("Identifier " + key + " is not a Float!");
         }
 
         return floatVariable.at(pair.second);
@@ -219,7 +219,7 @@ public:
 
         if (pair.first != DataType::DOUBLE)
         {
-            throw std::out_of_range("Identifier " + key + " is not a Double!");
+            throw std::invalid_argument("Identifier " + key + " is not a Double!");
         }
 
         return doubleVariable.at(pair.second);

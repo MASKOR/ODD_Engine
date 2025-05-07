@@ -46,7 +46,7 @@ void Expression::calculate(const cparse::TokenMap& tm) const
     }
     else //Should never happen
     {
-        throw std::out_of_range("Expression::calculate impossible Error");
+        throw std::logic_error("Expression::calculate impossible Error");
     }
 }
 
@@ -59,7 +59,7 @@ void ExpressionContainer::add_expression(const std::string& expressionString, co
 {
     if(variableTable.find_variable_without_error(resultName).first != DataType::ERROR)
     {
-        throw std::out_of_range("Identifier " + resultName + " is already in Database");
+        throw std::logic_error("Identifier " + resultName + " is already in Database");
     }
 
     // initalise variable of the expression
@@ -109,7 +109,7 @@ void ExpressionContainer::add_expression(const std::string& expressionString, co
             }
             else
             {
-                throw std::out_of_range("Datatype " + std::to_string(pair.first) + " not supported for Expression");
+                throw std::invalid_argument("Datatype " + std::to_string(pair.first) + " not supported for Expression");
             }
             this->indexMap[str] = {pair.first, pos};
             std::cout << str << " now in pairList " << std::endl;
@@ -137,7 +137,7 @@ void ExpressionContainer::add_expression(const std::string& expressionString, co
     }
     else
     {
-        throw std::out_of_range("Datatype " + std::to_string(dataType) + " not supported");
+        throw std::invalid_argument("Datatype " + std::to_string(dataType) + " not supported");
     }
 
     update();

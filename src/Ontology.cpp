@@ -301,7 +301,7 @@ Ontology create_ontology(const std::unordered_map<std::string, std::vector<Tripe
                         }
                         else
                         {
-                            throw std::out_of_range("not supported datatype");
+                            throw std::invalid_argument("not supported datatype");
                         }
                         newOntology.set_range_of_data_property(triple.subject, dataType);
                     }
