@@ -199,3 +199,21 @@ std::pair<DataType::value, int> Database::find_variable_without_error(const std:
         return {DataType::ERROR,-1};
     }
 }
+
+/*
+ * function that prints all variables
+ */
+void Database::print_all_keys(){
+    std::cout << "All keys in Database:" << std::endl;
+    for (const auto& pair : indexMap) {
+        std::cout << pair.first << std::endl;
+    }
+}
+
+std::vector<std::string> Database::get_all_keys(){
+    std::vector<std::string> keys;
+    for (const auto& pair : indexMap) {
+        keys.push_back(pair.first);
+    }
+    return keys;
+}

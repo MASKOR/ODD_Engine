@@ -44,6 +44,7 @@ class Expression
 public:
     explicit Expression(const std::string& expression, const std::string& resultName, const std::shared_ptr<bool>& ptr)
     {
+        this->expressionString = expression;
         this->calc = cparse::calculator(expression.c_str());
         this->resultName=resultName;
         this->dataType = DataType::BOOL;
@@ -52,6 +53,7 @@ public:
 
     explicit Expression(const std::string& expression, const std::string& resultName, const std::shared_ptr<int>& ptr)
     {
+        this->expressionString = expression;
         this->calc = cparse::calculator(expression.c_str());
         this->resultName=resultName;
         this->dataType = DataType::INT;
@@ -60,6 +62,7 @@ public:
 
     explicit Expression(const std::string& expression, const std::string& resultName, const std::shared_ptr<float>& ptr)
     {
+        this->expressionString = expression;
         this->calc = cparse::calculator(expression.c_str());
         this->resultName=resultName;
         this->dataType = DataType::FLOAT;
@@ -68,6 +71,7 @@ public:
 
     explicit Expression(const std::string& expression, const std::string& resultName, const std::shared_ptr<double>& ptr)
     {
+        this->expressionString = expression;
         this->calc = cparse::calculator(expression.c_str());
         this->resultName=resultName;
         this->dataType = DataType::DOUBLE;
@@ -79,6 +83,8 @@ public:
      */
     void calculate(const cparse::TokenMap& tm) const;
 
+    const std::string& get_expression_string() const { return expressionString; }
+    const std::string& get_result_name() const { return resultName; }
 private:
     std::string resultName;
     DataType::value dataType;
@@ -87,6 +93,7 @@ private:
     std::weak_ptr<float> floatResultPointer;
     std::weak_ptr<double> doubleResultPointer;
     cparse::calculator calc;
+    std::string expressionString;
 };
 
 /*
@@ -120,6 +127,20 @@ public:
     */
    
     static std::vector<Token> split_string_in_token_list(std::string string);
+
+    Expression get_expression(const std::string& resultName) const
+    {
+        for (const Expression& expression : expressionList)
+        {
+            if (expression.get_result_name() == resultName)
+            {
+                return expression;
+            }
+        }
+        throw std::out_of_range("Expression with name " + resultName + " not found");
+    }
+
+    std::vector<std::string> get_dependencies_for_key(const std::string& key);
 
 
 

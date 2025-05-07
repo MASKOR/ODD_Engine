@@ -78,20 +78,27 @@ public:
             }
             else
             {
-                this->valueReference = ontology.get_class_ptr(valueKey);
                 if(!ontology.find_class(valueKey))
                 {
-                    throw std::out_of_range(valueKey + " not found");
+                    throw std::out_of_range(valueKey + " not found test");
+                    return;
                 }
-                for (const auto& topClass: this->valueReference->topClasses)
+                std::shared_ptr<OntologyClass> valueClass = ontology.get_class_ptr(valueKey);
+                for (const auto& topClass: valueClass->topClasses)
                 {
                     if(topClass->id == this->classReference->id)
                     {
+                        this->valueReference = ontology.get_class_ptr(valueKey);
                         return;
                     }
                 }
                 throw std::domain_error(valueKey + " is not a Subclass of " + classKey);
             }
+        }
+
+        std::shared_ptr<std::string> get_id()
+        {
+            return objectName;
         }
 
         std::shared_ptr<OntologyClass> get_value()
@@ -236,6 +243,11 @@ public:
 
     std::shared_ptr<DomainObject>  get_domain_obj_shared_ptr (const std::string & key);
 
+    /*
+     * prints all variables
+     */
+    void print_all_keys();
+    std::vector<std::string> get_all_keys();
 
     std::vector<std::shared_ptr<bool>>                          boolVariable;
     std::vector<std::shared_ptr<int>>                           intVariable;
@@ -244,7 +256,6 @@ public:
     std::vector<std::shared_ptr<std::string>>                   stringVariable;
     std::vector<std::shared_ptr<DomainObject>> objects;
 
-private:
     /*
      *
      */

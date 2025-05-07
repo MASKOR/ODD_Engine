@@ -283,3 +283,30 @@ std::vector<Token> ExpressionContainer::split_string_in_token_list(std::string s
     }
     return tokenList;
 }
+
+std::vector<std::string> ExpressionContainer::get_dependencies_for_key(const std::string& key) {
+    std::vector<std::string> dependencies;
+    try
+    {
+        Expression expression = get_expression(key);
+        std::string expr = expression.get_expression_string();
+        std::vector<Token> tokens = split_string_in_token_list(expr);
+        
+        bool dependsOnKey = false;
+        for (const Token& token : tokens) {
+            if (token.type == stringType::Var) {
+                dependencies.push_back(token.token);
+            }
+        }
+
+        return dependencies;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        return dependencies;
+    }
+    
+
+    
+}
