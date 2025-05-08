@@ -139,6 +139,11 @@ public:
     void init_object(const std::string & objectName, const std::string& domainClassType,  Ontology& ontology);
 
     /*
+     * Updates an object in Database, creates new Database on subvalue Update
+     */
+    void update_object(const std::string & objectName, const std::string& domainClassType,  Ontology& ontology);
+
+    /*
      * Initialize an variable in Database
      */
     void init_variable(const std::string& key, DataType::value dataType);
@@ -235,6 +240,8 @@ public:
     std::pair<DataType::value, int> find_variable(const std::string& key);
 
     std::pair<DataType::value, int> find_variable_without_error(const std::string& key);
+
+    bool remove_variable(const std::string& key);
 
     /*
      * returns the value of a Object or a BoolVariable as String
