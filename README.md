@@ -61,6 +61,19 @@ find_package(odd_engine)
 
 ## Author
 
-**Moritz Rumpf**  
+ **Moritz Rumpf** & **Till Voss**
 FH Aachen, Faculty of Electrical Engineering and Information Technology  
 Supervisors: Prof. Dr.-Ing. Michael Reke, Joschua Schulte-Tigges M. Eng.
+
+## Citation
+If you use this project or its components in your research or in developing software, we kindly request that you cite it. Here's a suggested citation format:
+
+```bibtex
+@misc{ODDEngine,
+  author = {Moritz Rumpf & Till Voss},
+  title = {ODD Engine},
+  year = {2025},
+  publisher = {GitHub},
+  howpublished = {\url{https://github.com/MASKOR/ODD_Engine}}
+}
+```
