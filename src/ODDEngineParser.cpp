@@ -93,6 +93,8 @@ int ODDEngine::parse_guardrail_or_restriction(const std::string& key1guardrailNa
             LogicBlock logicBlock;
             logicBlock.operationType = get_constraint_operation_type(key2statementInGuardrail);
 
+            uint32_t expression_number = 0;
+
             // iterate through conditions
             for (auto it = value2NodeInGuardrail.begin(); it != value2NodeInGuardrail.end(); ++it) {
                 auto key3conditionName = it->first;
@@ -103,39 +105,50 @@ int ODDEngine::parse_guardrail_or_restriction(const std::string& key1guardrailNa
                     throw std::invalid_argument(key3conditionName.Scalar() + " is not allowed here");
                 }
 
-                // check if operand is part of Variables
-                auto pair = this->variableTable.find_variable(key3conditionName.Scalar());
+                if(key3conditionName.Scalar() == "EXP"){
+                    //Expression
+                    std::string expression = value3conditionValue.Scalar();
+                    std::cout << "Expression in rule: " << expression << std::endl;
+                    std::string expressionName = "_exp" + std::to_string(expression_number) + "_" + key1guardrailName;
+                    expression_number++;
+                    expressionContainer.add_expression(expression, expressionName, variableTable, DataType::BOOL);
+                    logicBlock.add_bool_condition(expressionName, {"true"}, variableTable.get_bool_ptr(expressionName));
+                }else{
 
-                std::vector<std::string> list;
-                if(value3conditionValue.IsScalar()) {
-                    list.emplace_back(value3conditionValue.Scalar());
-                }
-                else {
-                    for (auto entry: value3conditionValue) {
-                        list.emplace_back(entry.Scalar());
+                    // check if operand is part of Variables
+                    auto pair = this->variableTable.find_variable(key3conditionName.Scalar());
+    
+                    std::vector<std::string> list;
+                    if(value3conditionValue.IsScalar()) {
+                        list.emplace_back(value3conditionValue.Scalar());
                     }
-                }
-
-                if (pair.first==DataType::BOOL) {
-                    logicBlock.add_bool_condition(key3conditionName.Scalar(), list,
-                                    this->variableTable.get_bool_ptr(key3conditionName.Scalar()));
-                }
-                else if (pair.first==DataType::OBJECT) {
-                    logicBlock.add_object_condition(key3conditionName.Scalar(), list,
-                                    this->variableTable.get_domain_obj_shared_ptr(key3conditionName.Scalar()));
-                }
-                else {
-                    throw std::invalid_argument("Datatype " + std::to_string(pair.first) + " not supported");
-                }
-
-                // Set Guardrail height
-                try{
-                    int dependencyGuardrailHeight = get_guardrail_height(key3conditionName.Scalar());
-                    if(dependencyGuardrailHeight > height){
-                        height = dependencyGuardrailHeight;
+                    else {
+                        for (auto entry: value3conditionValue) {
+                            list.emplace_back(entry.Scalar());
+                        }
                     }
+    
+                    if (pair.first==DataType::BOOL) {
+                        logicBlock.add_bool_condition(key3conditionName.Scalar(), list,
+                                        this->variableTable.get_bool_ptr(key3conditionName.Scalar()));
+                    }
+                    else if (pair.first==DataType::OBJECT) {
+                        logicBlock.add_object_condition(key3conditionName.Scalar(), list,
+                                        this->variableTable.get_domain_obj_shared_ptr(key3conditionName.Scalar()));
+                    }
+                    else {
+                        throw std::invalid_argument("Datatype " + std::to_string(pair.first) + " not supported");
+                    }
+    
+                    // Set Guardrail height
+                    try{
+                        int dependencyGuardrailHeight = get_guardrail_height(key3conditionName.Scalar());
+                        if(dependencyGuardrailHeight > height){
+                            height = dependencyGuardrailHeight;
+                        }
+                    }
+                    catch (const std::out_of_range& e){}
                 }
-                catch (const std::out_of_range& e){}
             }
             newGuardrail.logicBlocks.emplace_back(logicBlock);
         }

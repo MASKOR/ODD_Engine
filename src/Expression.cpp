@@ -14,13 +14,15 @@
 
 
 // Expression ----------------------------------------------------------
-void Expression::calculate(const cparse::TokenMap& tm) const
+void Expression::calculate( cparse::TokenMap& tm) const
 {
+    
     if(dataType==DataType::BOOL)
     {
         if(auto lockedPointer= boolResultPointer.lock())
         {
             *lockedPointer=calc.eval(tm).asBool();
+            tm[resultName] = *lockedPointer;
         }
     }
     else if(dataType==DataType::INT)
@@ -28,6 +30,7 @@ void Expression::calculate(const cparse::TokenMap& tm) const
         if(auto lockedPointer= intResultPointer.lock())
         {
             *lockedPointer=calc.eval(tm).asInt();
+            tm[resultName] = *lockedPointer;
         }
     }
     else if(dataType==DataType::FLOAT)
@@ -35,6 +38,7 @@ void Expression::calculate(const cparse::TokenMap& tm) const
         if(auto lockedPointer= floatResultPointer.lock())
         {
             *lockedPointer=calc.eval(tm).asDouble();
+            tm[resultName] = *lockedPointer;
         }
     }
     else if(dataType==DataType::DOUBLE)
@@ -42,6 +46,7 @@ void Expression::calculate(const cparse::TokenMap& tm) const
         if(auto lockedPointer= doubleResultPointer.lock())
         {
             *lockedPointer=calc.eval(tm).asDouble();
+            tm[resultName] = *lockedPointer;
         }
     }
     else //Should never happen
@@ -85,7 +90,12 @@ void ExpressionContainer::add_expression(const std::string& expressionString, co
             token.token = str;
 
             size_t pos;
-            std::pair<DataType::value, int> pair = variableTable.find_variable(str);
+            std::pair<DataType::value, int> pair;
+            try{
+                pair = variableTable.find_variable(str);
+            }catch (std::out_of_range& e){
+                throw std::out_of_range("Variable " + str + " not found in Database, did you forget to add it?");
+            }
             if(pair.first == DataType::BOOL)
             {
                 pos = boolVariables.size();
@@ -193,6 +203,11 @@ stringType::value ExpressionContainer::get_string_type(const std::string& s){
     int couldBeFloat = -1;
     bool charWasThere = false;
     bool numberWasThere=false;
+
+    if(s == "true" || s == "false"){
+        return stringType::Bool;
+    }
+    
     while (it != s.end() ) {
         if(*it == '.'){
             if(charWasThere) {
@@ -280,6 +295,9 @@ std::vector<Token> ExpressionContainer::split_string_in_token_list(std::string s
     for (Token& token: tokenList)
     {
         token.type = get_string_type(token.token);
+        if(token.type == stringType::Bool){
+            token.token = token.token == "true" ? "1" : "0";
+        }
     }
     return tokenList;
 }

@@ -81,8 +81,14 @@ public:
     /*
      * runs the Calculation of the expression with the given TokenMap tm and returns the result
      */
-    void calculate(const cparse::TokenMap& tm) const;
+    void calculate( cparse::TokenMap& tm) const;
 
+    const std::string& get_cparse_expression_string() const {
+            //std::cout << this->calc.str() <<std::endl ;return this->calc.str().c_str() ; 
+            cached_expression = this->calc.str();
+            std::cout << "STR: " << cached_expression << std::endl;
+            return cached_expression;
+        }
     const std::string& get_expression_string() const { return expressionString; }
     const std::string& get_result_name() const { return resultName; }
 private:
@@ -94,6 +100,7 @@ private:
     std::weak_ptr<double> doubleResultPointer;
     cparse::calculator calc;
     std::string expressionString;
+    mutable std::string cached_expression;
 };
 
 /*
