@@ -115,7 +115,7 @@ public:
 
     std::string get_target_of_restriction(const std::string& key);
 
-    std::string get_expression_of_variable(const std::string& key);
+    std::string get_expression_of_variable(const std::string& key, bool getCParse = false);
 
     Guardrail get_guardrail(const std::string& key)
     {

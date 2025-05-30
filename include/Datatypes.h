@@ -21,7 +21,7 @@ struct DataType
 
 struct stringType {
     enum value {
-        NaN, Var, Int, Float
+        NaN, Var, Int, Float, Bool
     };
 };
 

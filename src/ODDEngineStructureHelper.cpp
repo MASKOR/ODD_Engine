@@ -116,13 +116,16 @@ std::string ODDEngine::get_target_of_restriction(const std::string& key)
     }
 }
 
-std::string ODDEngine::get_expression_of_variable(const std::string& key)
+std::string ODDEngine::get_expression_of_variable(const std::string& key, bool getCParse)
 {
     if(variableTable.find_variable_without_error(key).first != DataType::ERROR)
     {
         Expression expression = expressionContainer.get_expression(key);
-        std::string expr = expression.get_expression_string();
-        return expr;
+
+        if(getCParse)
+            return expression.get_cparse_expression_string();
+        else
+            return expression.get_expression_string();
     }else{
         std::cout << "Key not found in variable table" << std::endl;
         throw std::out_of_range("Identifier " + key + " is not in Database");
