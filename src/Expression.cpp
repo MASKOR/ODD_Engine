@@ -81,6 +81,7 @@ void ExpressionContainer::add_expression(const std::string& expressionString, co
             if(this->indexMap.find(token.token)!=this->indexMap.end())
             {
                 std::cout << token.token << " already in pairList " << std::endl;
+                refinedExpression+=token.token;
                 continue;
             }
 
