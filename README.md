@@ -61,7 +61,7 @@ find_package(odd_engine)
 
 ## Author
 
- **Moritz Rumpf** & **Till Voss**
+ **Joschua Schulte-Tigges** & **Moritz Rumpf** & **Till Voss**
 FH Aachen, Faculty of Electrical Engineering and Information Technology  
 Supervisors: Prof. Dr.-Ing. Michael Reke, Joschua Schulte-Tigges M. Eng.
 
@@ -70,7 +70,7 @@ If you use this project or its components in your research or in developing soft
 
 ```bibtex
 @misc{ODDEngine,
-  author = {Moritz Rumpf & Till Voss},
+  author = {Joschua Schulte-Tigges & Moritz Rumpf & Till Voss},
   title = {ODD Engine},
   year = {2025},
   publisher = {GitHub},
