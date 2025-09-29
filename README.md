@@ -70,7 +70,7 @@ If you use this project or its components in your research or in developing soft
 
 ```bibtex
 @misc{ODDEngine,
-  author = {Moritz Rumpf & Till Voss},
+  author = {Joschua Schulte-Tigges & Moritz Rumpf & Till Voss},
   title = {ODD Engine},
   year = {2025},
   publisher = {GitHub},
