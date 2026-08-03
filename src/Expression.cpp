@@ -11,6 +11,7 @@
 #include "../include/Expression.h"
 
 #include <Database.h>
+#include <algorithm>
 
 
 // Expression ----------------------------------------------------------
@@ -77,18 +78,18 @@ void ExpressionContainer::add_expression(const std::string& expressionString, co
     {
         if(token.type == stringType::Var)
         {
-            auto indexIter = this->indexMap.find(token.token);
-            if(this->indexMap.find(token.token)!=this->indexMap.end())
+            std::string str = token.token;
+            // cparse cannot handle '.' inside variable names,
+            // so use an underscore placeholder in the expression and token map
+            std::string identifier = str;
+            std::replace(identifier.begin(), identifier.end(), '.', '_');
+
+            if(this->indexMap.find(identifier)!=this->indexMap.end())
             {
-                std::cout << token.token << " already in pairList " << std::endl;
-                refinedExpression+=token.token;
+                std::cout << str << " already in pairList " << std::endl;
+                refinedExpression+=identifier;
                 continue;
             }
-
-            std::weak_ptr<double> ptr;
-            std::string str = token.token;
-            str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
-            token.token = str;
 
             size_t pos;
             std::pair<DataType::value, int> pair;
@@ -122,8 +123,9 @@ void ExpressionContainer::add_expression(const std::string& expressionString, co
             {
                 throw std::invalid_argument("Datatype " + std::to_string(pair.first) + " not supported for Expression");
             }
-            this->indexMap[str] = {pair.first, pos};
+            this->indexMap[identifier] = {pair.first, pos};
             std::cout << str << " now in pairList " << std::endl;
+            token.token = identifier;
         }
         refinedExpression+=token.token;
     }
@@ -203,7 +205,10 @@ stringType::value ExpressionContainer::get_string_type(const std::string& s){
     std::string::const_iterator it = s.begin();
     int couldBeFloat = -1;
     bool charWasThere = false;
-    bool numberWasThere=false;
+    bool numberWasThere = false;
+    bool dotWasThere = false;
+    bool charBeforeDot = false;
+    bool charAfterDot = false;
 
     if(s == "true" || s == "false"){
         return stringType::Bool;
@@ -211,8 +216,19 @@ stringType::value ExpressionContainer::get_string_type(const std::string& s){
     
     while (it != s.end() ) {
         if(*it == '.'){
+            dotWasThere = true;
+            // Check if there was a character before the dot
             if(charWasThere) {
-                return stringType::Var;
+                charBeforeDot = true;
+                // Check if there's a character after the dot for variable pattern (e.g., object.property)
+                std::string::const_iterator next_it = it + 1;
+                if(next_it != s.end() && 
+                   ((int)*next_it > 64 && (int)*next_it < 91 || 
+                    (int)*next_it == 95 || 
+                    (int)*next_it > 96 && (int)*next_it < 123)) {
+                    charAfterDot = true;
+                    return stringType::Var;  // Definitely a variable like object.property
+                }
             }
             if(numberWasThere){
                 couldBeFloat++;
@@ -226,10 +242,17 @@ stringType::value ExpressionContainer::get_string_type(const std::string& s){
         }
         else if (std::isdigit(*it) ){
             numberWasThere = true;
-
+            // If we had chars before, this is still a variable (e.g., var1, var2)
+            if(charWasThere) {
+                // Continue, could still be a variable
+            }
         }
         else if((int)*it > 64 && (int)*it < 91 || (int)*it == 95  || (int)*it > 96 && (int)*it < 123){
-            charWasThere= true;
+            charWasThere = true;
+            // If we're after a dot and we have chars, it's definitely a variable
+            if(dotWasThere && charBeforeDot) {
+                charAfterDot = true;
+            }
         }
         else{
             break;
@@ -237,6 +260,10 @@ stringType::value ExpressionContainer::get_string_type(const std::string& s){
         ++it;
     }
     if(!s.empty() && it == s.end()){
+        // If we have pattern like "object.property", it's a variable
+        if(charBeforeDot && charAfterDot && dotWasThere) {
+            return stringType::Var;
+        }
         if(charWasThere){
             return stringType::Var;
         }

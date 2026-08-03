@@ -58,7 +58,7 @@ private:
 
 public:
     // INFERENCE -------------------------------------
-    bool inference(std::vector<std::string>& targets);
+    std::vector<std::string> inference();
 
 private:
 

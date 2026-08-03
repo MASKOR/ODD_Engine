@@ -69,7 +69,7 @@ void Database::init_object(const std::string & objectName, const std::string& do
             id.erase(0, pos + 1);
         }
 
-        std::string key = objectName+id;
+        std::string key = objectName + "." + id;
 
         this->init_variable(key, type);
         objects[objects.size()-1]->dataProperies.emplace_back(std::make_shared<DomainObjectDataProperty>(domain_object_data_property));
@@ -119,7 +119,7 @@ void Database::update_object(const std::string & objectName, const std::string& 
             id.erase(0, pos + 1);
         }
 
-        std::string key = objectName+id;
+        std::string key = objectName + "." + id;
 
         try
         {
@@ -155,7 +155,7 @@ void Database::update_object(const std::string & objectName, const std::string& 
 
         if(!is_in_objects)
         {
-            std::string key_to_remove = objectName + dataPropId;
+            std::string key_to_remove = objectName + "." + dataPropId;
             remove_variable(key_to_remove);
             std::cout << "Key " << key_to_remove << " removed" << std::endl;
         }

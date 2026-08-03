@@ -20,8 +20,15 @@
 int main(int argc, char *argv[]) {
   ODDEngine oddEngine;
 
-  oddEngine.parse_ontology("../ontology/ontology_fsw.rdf");
-  oddEngine.parse_odd("../config/odd_fsw.yaml");
+  oddEngine.parse_ontology("../../adp_odd/ontology_fsw.rdf");
+  oddEngine.parse_odd("../../adp_odd/odd_fsw.yaml");
+  
+  oddEngine.set_data_property("egoVehicle.speed", 0.1);
+  oddEngine.set_sub_value("nextSection", "http://www.semanticweb.org/mo/ontologies/2024/7/fsw_adp#tunnel");
+  std::vector<std::string> t = oddEngine.inference();
 
+  for (auto i : t){
+    std::cout << i<< std::endl;
+  }
   return 0;
 }

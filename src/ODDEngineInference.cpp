@@ -80,9 +80,11 @@ bool ODDEngine::check_guardrail(const std::pair<std::string, Guardrail>& guardra
     return true;
 }
 
-bool ODDEngine::inference(std::vector<std::string>& targets){
+std::vector<std::string> ODDEngine::inference(){
     // Calculate Expression
     this->expressionContainer.calculate_all();
+
+    std::vector<std::string> targets;
 
     // Check Guardrails
     int heightLevel = 0;
@@ -102,5 +104,13 @@ bool ODDEngine::inference(std::vector<std::string>& targets){
         guardrailLevel = guardrailMap[heightLevel];
     }
 
-    return true;
+    std::unordered_set<std::string> uniqueTargets;
+    std::vector<std::string> result;
+    for (const std::string& target : targets) {
+        if (uniqueTargets.insert(target).second) {
+            result.push_back(target);
+        }
+    }
+
+    return result;
 }
