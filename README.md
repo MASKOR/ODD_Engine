@@ -3,23 +3,19 @@
 
 This repository implements an ODD-oriented definition language and a runtime environment for monitoring and restricting the functionality of an Automated Driving System (ADS) based on predefined Operational Design Domains (ODD).
 
-## Contents
+## Overview
 
 - **Ontology:** Knowledge structure based on OWL, defining attributes and relations within the ODD.
+  Supports multi-level ontologies for complex environmental conditions.
 - **Database:** Storage and access to instances (objects) of the ontology and evaluation results.
 - **Expressions:** Mathematical and logical expressions for calculating and verifying ODD conditions.
-- **ODD Engine:** Evaluation of the current vehicle situation based on defined rules and restrictions.
-- **Integration:** ROS2 node to connect the engine with an existing ADS (e.g., from the ADP project at FH Aachen).
-
-## Features
-
-- Definition of ODDs in a human-readable YAML format
-- Support for:
-  - Mathematical and logical expressions
-  - Combination of rules (Guardrails)
-  - Multi-level ontologies for complex environmental conditions
-- Output of restriction keys (e.g., ToR or MRM) to control ADS behavior
-- Modern C++17 implementation using smart pointers and standard library features
+- **ODD Engine:** Evaluation of the current vehicle situation based on defined rules and
+  restrictions, including the combination of rules into Guardrails. ODDs are defined in a
+  human-readable YAML format, and the engine outputs restriction keys (e.g., ToR or MRM) to
+  control ADS behavior.
+- **Integration:** Modern C++17 implementation using smart pointers and standard library
+  features, usable directly or through the Python bindings. A ROS2 node connects the engine
+  with an existing ADS (e.g., from the ADP project at FH Aachen).
 
 ## Usage
 
@@ -91,11 +87,51 @@ put `build/` on `PYTHONPATH`.
 
 
 
-### Python example
+## C++ example
 
 The whole engine is exposed through a single `ODDEngine` class. Load the
 ontology and the ODD definition, push the current vehicle state in, then call
 `inference()` to get the list of active restriction targets:
+
+```cpp
+#include <ODDEngine.h>
+#include <iostream>
+
+int main() {
+  ODDEngine engine;
+  engine.parse_ontology("ontology/ontology_fsw.rdf");
+  engine.parse_odd("config/odd_fsw.yaml");
+
+  // IRIs of ontology individuals are prefixed with the ODD's DNAMESPACE
+  const std::string ns = engine.get_default_namespace();
+
+  // Feed the current situation into the engine
+  engine.set_data_property("egoVehicle.speed", 0.1);
+  engine.set_sub_value("nextSection", ns + "tunnel");
+
+  // Evaluate the ODD; returns e.g. {"MRM"} or {"ToR"}
+  for (const std::string &target : engine.inference()) {
+    std::cout << "active restriction: " << target << std::endl;
+  }
+  return 0;
+}
+```
+
+Inside this repository, add a target to `CMakeLists.txt`:
+
+```cmake
+add_executable(my_app src/my_app.cpp $<TARGET_OBJECTS:cparse>)
+target_link_libraries(my_app ODDEngine cparse ${REDLAND_LIBRARIES})
+```
+
+> **Note:** the `$<TARGET_OBJECTS:cparse>` part is required. CParse registers
+> its operators from static initialisers that no symbol references, so if those
+> objects are only reachable through a static archive the linker discards them
+> and expressions fail at runtime with `Invalid operator: -`.
+
+## Python example
+
+The same `ODDEngine` class is exposed to Python one-to-one:
 
 ```python
 import oddengine
@@ -116,7 +152,9 @@ for target in engine.inference():
     print("active restriction:", target)
 ```
 
-Available methods:
+## Available methods
+
+Identical in both languages:
 
 | Method | Description |
 | --- | --- |
@@ -127,8 +165,8 @@ Available methods:
 | `inference()` | Evaluate the ODD; returns the list of active restriction targets |
 | `get_default_namespace()` | The `DNAMESPACE` declared by the loaded ODD file |
 
-Paths are resolved relative to the current working directory, so run the script
-from the repository root for the paths above to work.
+Paths are resolved relative to the current working directory, so run the
+examples from the repository root for the paths above to work.
 
 ## License
 
