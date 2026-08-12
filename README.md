@@ -6,7 +6,6 @@ This repository implements an ODD-oriented definition language and a runtime env
 ## Overview
 
 - **Ontology:** Knowledge structure based on OWL, defining attributes and relations within the ODD.
-- **Expressions:** Mathematical and logical expressions for calculating and verifying ODD conditions.
 - **ODD Engine:** Evaluation of the current vehicle situation based on defined rules and
   restrictions, including the combination of rules into Guardrails. ODDs are defined in a
   human-readable YAML format, and the engine outputs restriction keys (e.g., ToR or MRM) to
