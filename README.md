@@ -71,33 +71,17 @@ first, then, from the repository root:
 pip install --user .
 ```
 
-`pybind11` and `scikit-build-core` are pulled in automatically as build
-dependencies — no need to install them by hand for this path.
-
-Verify the install:
-```bash
-python3 -c "import oddengine; print(oddengine.ODDEngine)"
-```
-
-This installs into `~/.local/lib/python3.*/site-packages`, which is on
-`sys.path` by default, so `import oddengine` works from any directory without
-activating anything.
-
-### Alternative: virtual environment
-
-Installing into a virtual environment keeps the module scoped to this project.
-Worth doing if you work on several projects with the same interpreter, since a
-`--user` install is shared by all of them:
+or 
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install .
 ```
-
-Inside an activated venv the `--user` flag is neither needed nor allowed. The
-module is available for as long as the venv is active; `deactivate` returns you
-to the system interpreter.
+Verify the install:
+```bash
+python3 -c "import oddengine; print(oddengine.ODDEngine)"
+```
 
 ### Rebuilding after C++ changes
 
