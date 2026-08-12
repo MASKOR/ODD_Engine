@@ -6,8 +6,6 @@ This repository implements an ODD-oriented definition language and a runtime env
 ## Overview
 
 - **Ontology:** Knowledge structure based on OWL, defining attributes and relations within the ODD.
-  Supports multi-level ontologies for complex environmental conditions.
-- **Database:** Storage and access to instances (objects) of the ontology and evaluation results.
 - **Expressions:** Mathematical and logical expressions for calculating and verifying ODD conditions.
 - **ODD Engine:** Evaluation of the current vehicle situation based on defined rules and
   restrictions, including the combination of rules into Guardrails. ODDs are defined in a
@@ -67,23 +65,71 @@ find_package(odd_engine)
 ## Install (Python bindings)
 
 The Python module is built through [scikit-build-core](https://github.com/scikit-build/scikit-build-core),
-which drives the same CMake build. From the repository root:
+which drives the same CMake build. Install the system dependencies listed above
+first, then, from the repository root:
 
 ```bash
+pip install --user .
+```
+
+`pybind11` and `scikit-build-core` are pulled in automatically as build
+dependencies — no need to install them by hand for this path.
+
+Verify the install:
+```bash
+python3 -c "import oddengine; print(oddengine.ODDEngine)"
+```
+
+This installs into `~/.local/lib/python3.*/site-packages`, which is on
+`sys.path` by default, so `import oddengine` works from any directory without
+activating anything.
+
+### Alternative: virtual environment
+
+Installing into a virtual environment keeps the module scoped to this project.
+Worth doing if you work on several projects with the same interpreter, since a
+`--user` install is shared by all of them:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install .
 ```
 
-This compiles the engine and installs an `oddengine` extension module into your
-environment, so `import oddengine` works from any directory. A virtual
-environment is recommended; without one, use `pip install --user .`.
+Inside an activated venv the `--user` flag is neither needed nor allowed. The
+module is available for as long as the venv is active; `deactivate` returns you
+to the system interpreter.
 
-The install is a snapshot — re-run `pip install .` after changing any C++
-source. Use `pip install -e .` instead if you want an editable install that
-rebuilds on demand.
+### Rebuilding after C++ changes
 
-The module is also produced as `build/oddengine.cpython-*.so` by a plain CMake
-build, but it is only importable from that directory unless you install it or
-put `build/` on `PYTHONPATH`.
+A normal install is a snapshot: the C++ sources are compiled once and copied
+into your environment, so **changes to any `.cpp`/`.h` will not take effect
+until you re-run `pip install --user .`**. The same applies to
+`src/bindings.cpp` — newly exposed methods only appear after a reinstall.
+
+For an editable install that recompiles automatically whenever an import
+detects changed sources:
+
+```bash
+pip install --user scikit-build-core pybind11
+pip install --user --no-build-isolation -Ceditable.rebuild=true -e .
+```
+
+Both flags are required. `--no-build-isolation` is what makes the build
+dependencies (installed in the first line) visible at rebuild time, and
+`editable.rebuild=true` is what enables the rebuild — a plain `pip install -e .`
+installs a redirect to a *fixed* compiled module and will **not** pick up C++
+changes on its own.
+
+### Building the module without pip
+
+A plain CMake build also produces the module, at
+`build/oddengine.cpython-*.so`. It is only importable from `build/` unless you
+add that directory to `PYTHONPATH`:
+
+```bash
+export PYTHONPATH=$PWD/build:$PYTHONPATH
+```
 
 
 
