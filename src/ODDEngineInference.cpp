@@ -81,7 +81,7 @@ bool ODDEngine::check_guardrail(
       return false;
   }
   if (guardrailPair.second.isRestriction) {
-    std::cout << "Guardrail " << guardrailPair.second.title << " triggered"
+    std::cout << "Guardrail " << guardrailPair.first << " triggered"
               << std::endl;
     targets.emplace_back(guardrailPair.second.target);
   }
